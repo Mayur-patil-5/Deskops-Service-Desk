@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 interface AuthPayload {
     userId: string;
-    organisationId: string;
+    organisationId?: string | undefined;
     role: string;
 }
 
@@ -36,6 +36,7 @@ const authMiddleware = (
                 message: "Access denied. Invalid token."
             });
         }
+
         const jwtSecret = process.env.JWT_SECRET;
 
         if (!jwtSecret) {
@@ -44,10 +45,11 @@ const authMiddleware = (
 
         const decoded = jwt.verify(token, jwtSecret);
 
-        if (typeof decoded === "string" ||
+        if (
+            typeof decoded === "string" ||
             !("userId" in decoded) ||
-            !("organisationId" in decoded) ||
-            !("role" in decoded)) {
+            !("role" in decoded)
+        ) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid token payload"
@@ -56,13 +58,7 @@ const authMiddleware = (
 
         req.user = {
             userId: decoded.userId as string,
-            organisationId: decoded.organisationId as string,
-            role: decoded.role as string
-        };
-
-        req.user = {
-            userId: decoded.userId as string,
-            organisationId: decoded.organisationId as string,
+            organisationId: decoded.organisationId as string | undefined,
             role: decoded.role as string
         };
 
