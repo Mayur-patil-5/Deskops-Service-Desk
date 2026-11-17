@@ -6,3 +6,10 @@ node_modules/
 dist/
 build/
 coverage/
+
+# Generated files
+Backend/src/generated/
+Backend/.agents/
+Backend/.claude/
+Backend/.cursor/
+Backend/.devin/
