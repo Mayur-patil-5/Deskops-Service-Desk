@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -8,22 +9,26 @@ datasource db {
 }
 
 model Organisation {
-  id        String   @id @default(uuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String       @id @default(uuid())
+  name        String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
   memberships Membership[]
+  rooms       Room[]
+  tickets     Ticket[]
 }
 
-
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  memberships Membership[]
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  passwordHash   String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  memberships    Membership[]
+  createdTickets Ticket[] @relation("TicketCreator")
 }
 
 model Membership {
@@ -33,8 +38,40 @@ model Membership {
   role           String
   createdAt      DateTime @default(now())
 
-  user         User         @relation(fields: [userId], references: [id])
-  organisation Organisation @relation(fields: [organisationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
 
   @@unique([userId, organisationId])
+}
+
+model Room {
+  id             String   @id @default(uuid())
+  name           String
+  organisationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  tickets        Ticket[]
+
+  @@unique([id, organisationId])
+}
+
+model Ticket {
+  id             String   @id @default(uuid())
+  title          String
+  description    String
+  status         String   @default("OPEN")
+  organisationId String
+  roomId         String
+  createdById    String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  room           Room         @relation(fields: [roomId, organisationId], references: [id, organisationId])
+  createdBy      User         @relation("TicketCreator", fields: [createdById], references: [id])
+
+  @@index([organisationId])
+  @@index([roomId, status])
 }

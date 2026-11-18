@@ -149,9 +149,6 @@ router.get(
     }
 );
 
-export default router;
-
-
 // Login input validation
 const loginSchema = z.object({
     email: z.string().email(),
@@ -241,4 +238,6 @@ router.post("/login", authLimiter, async (req, res) => {
         });
     }
 });
+
+export default router;
 
