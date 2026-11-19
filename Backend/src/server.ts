@@ -6,6 +6,7 @@ import authRoutes from "./Auth/auth.routes.js";
 import generalLimiter from "./Middlewares/rateLimit.middleware.js";
 import helmet from "helmet";
 import ticketRoutes from "./Routes/ticket.routes.js";
+import assignmentRoutes from "./Routes/assignment.routes.js";
 
 dotenv.config();
 
@@ -31,5 +32,6 @@ app.get("/", (req, res) => {
 app.use("/api/v1", healthRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/tickets", ticketRoutes);
+app.use("/api/v1/assignments", assignmentRoutes);
 
 export default app;
